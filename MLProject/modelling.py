@@ -16,7 +16,6 @@ def eval_metrics(actual, pred):
     return rmse, mae, r2
 
 if __name__ == "__main__":
-    # Gunakan argparse agar bisa menerima argumen saat mlflow run dijalankan
     parser = argparse.ArgumentParser()
     parser.add_argument("--csv_url", type=str, default="student_data_clean.csv")
     parser.add_argument("--target_var", type=str, default="G3")
@@ -34,7 +33,7 @@ if __name__ == "__main__":
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    with mlflow.start_run():
+    with mlflow.start_run() as run:
         model = LinearRegression()
         model.fit(X_train, y_train)
         
@@ -46,4 +45,6 @@ if __name__ == "__main__":
         mlflow.log_metric("r2", r2)
         
         mlflow.sklearn.log_model(model, "model")
-        print("Model berhasil dilatih dan disimpan!")
+
+        with open("../run_id.txt", "w") as f:
+            f.write(run.info.run_id)
