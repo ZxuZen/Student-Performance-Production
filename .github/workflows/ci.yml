@@ -41,9 +41,17 @@ jobs:
 
       - name: Get latest MLflow run_id
         run: |
-          RUN_ID=$(ls -td mlruns/0/*/ | head -n 1 | cut -d'/' -f3)
+          RUN_ID=$(ls -1td mlruns/0/*/ | grep -v 'models' | grep -v '.trash' | head -n 1 | xargs -n 1 basename)
+
+          if [ -z "$RUN_ID" ]; then
+            echo "Error: RUN_ID tidak ditemukan!"
+            echo "Isi direktori mlruns/0:"
+            ls -R mlruns/0/
+            exit 1
+          fi
+
           echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-          echo "Model berhasil dibuat dengan Run ID: $RUN_ID"
+          echo "Model berhasil dideteksi dengan RUN_ID: $RUN_ID"
 
       - name: Build Docker Model Image
         run: |
