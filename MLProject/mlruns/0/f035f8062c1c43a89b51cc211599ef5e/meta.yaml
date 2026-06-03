@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/Kuliah/Pelatihan/AI/MLOps/V2.1/Student-Performance-Production/MLProject/mlruns/0/f035f8062c1c43a89b51cc211599ef5e/artifacts
+end_time: 1780453512819
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: f035f8062c1c43a89b51cc211599ef5e
+run_name: big-goat-827
+run_uuid: f035f8062c1c43a89b51cc211599ef5e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1780453500690
+status: 3
+tags: []
+user_id: MSI GF63

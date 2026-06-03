@@ -35,41 +35,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install mlflow pandas scikit-learn
 
-      - name: Run MLflow Project and get run_id
+      - name: Run MLflow Project
         run: |
-          # Run MLflow project and capture the run ID from output
-          mlflow run MLProject --env-manager=local 2>&1 | tee mlflow_output.log
+          mlflow run MLProject --env-manager=local
 
-          # Extract run_id using a dedicated Python script (avoids shell quoting issues)
-          cat > get_run_id.py << 'EOF'
-import mlflow
-import sys
-
-# Try searching all experiments
-runs = mlflow.search_runs(order_by=["start_time DESC"], max_results=1)
-if runs.empty:
-    print("ERROR: No MLflow runs found!", file=sys.stderr)
-    sys.exit(1)
-
-run_id = runs.iloc[0]["run_id"]
-# Only print the run_id, nothing else
-print(run_id, end="")
-EOF
-
-          RUN_ID=$(python get_run_id.py)
-          echo "DEBUG: Extracted RUN_ID='$RUN_ID'"
-
-          if [ -z "$RUN_ID" ]; then
-            echo "Error: RUN_ID tidak ditemukan!"
-            echo "=== MLflow output log ==="
-            cat mlflow_output.log
-            echo "=== mlruns directory ==="
-            find mlruns/ -maxdepth 3 -type d 2>/dev/null || echo "mlruns/ not found"
+      - name: Get latest MLflow run_id
+        run: |
+          if [ ! -d "mlruns/0" ]; then
+            echo "Error: Folder mlruns/0 tidak ditemukan!"
+            ls -R
             exit 1
           fi
 
+          RUN_ID=$(ls -td mlruns/0/*/ | head -1 | xargs -n 1 basename)
           echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-          echo "Model berhasil dibuat dengan RUN_ID: $RUN_ID"
+          echo "Model berhasil: $RUN_ID"
 
       - name: Build Docker Model Image
         run: |
