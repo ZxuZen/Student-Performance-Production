@@ -2,4 +2,7 @@ name: Student_Grade_Prediction
 
 entry_points:
   main:
-    command: "python modelling.py"
+    parameters:
+      csv_url: { type: str, default: "student_data_clean.csv" }
+      target_var: { type: str, default: "G3" }
+    command: "python modelling.py --csv_url {csv_url} --target_var {target_var}"

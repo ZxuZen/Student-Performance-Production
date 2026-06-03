@@ -1,11 +1,13 @@
+import os
+import sys
+import argparse # Tambahkan ini
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import mlflow
 import mlflow.sklearn
-import sys
 
 def eval_metrics(actual, pred):
     rmse = np.sqrt(mean_squared_error(actual, pred))
@@ -14,16 +16,21 @@ def eval_metrics(actual, pred):
     return rmse, mae, r2
 
 if __name__ == "__main__":
-    csv_path = "student_data_clean.csv"
+    # Gunakan argparse agar bisa menerima argumen saat mlflow run dijalankan
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--csv_url", type=str, default="student_data_clean.csv")
+    parser.add_argument("--target_var", type=str, default="G3")
+    args = parser.parse_args()
+    
     try:
-        data = pd.read_csv(csv_path)
-        print("Data berhasil dimuat!")
+        data = pd.read_csv(args.csv_url)
+        print(f"Berhasil memuat data {args.csv_url}")
     except Exception as e:
         print(f"Error membaca data: {e}")
         sys.exit(1)
     
-    X = data.drop(["G3"], axis=1)
-    y = data["G3"]
+    X = data.drop([args.target_var], axis=1)
+    y = data[args.target_var]
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
@@ -39,4 +46,4 @@ if __name__ == "__main__":
         mlflow.log_metric("r2", r2)
         
         mlflow.sklearn.log_model(model, "model")
-        print("Model berhasil dilatih")
+        print("Model berhasil dilatih dan disimpan!")

@@ -1,4 +1,4 @@
-name: CI/CD MLflow Pipeline
+name: CI/CD MLflow & Docker Pipeline
 
 on:
   push:
@@ -8,18 +8,27 @@ on:
     branches:
       - main
 
+env:
+  CSV_URL: "MLProject/student_data_clean.csv"
+  TARGET_VAR: "G3"
+
 jobs:
-  build-and-train:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Set up Python 3.12.7
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.12.7"
+
+      - name: Check Environment Variables
+        run: |
+          echo "Dataset URL: $CSV_URL"
+          echo "Target Variable: $TARGET_VAR"
 
       - name: Install dependencies
         run: |
@@ -29,3 +38,27 @@ jobs:
       - name: Run MLflow Project
         run: |
           mlflow run MLProject --env-manager=local
+
+      - name: Get latest MLflow run_id
+        run: |
+          RUN_ID=$(ls -td mlruns/0/*/ | head -n 1 | cut -d'/' -f3)
+          echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
+          echo "Model berhasil dibuat dengan Run ID: $RUN_ID"
+
+      - name: Build Docker Model Image
+        run: |
+          mlflow models build-docker --model-uri "runs:/$RUN_ID/model" --name "student_model"
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Tag Docker Image
+        run: |
+          docker tag student_model ${{ secrets.DOCKER_HUB_USERNAME }}/student_model:latest
+
+      - name: Push Docker Image to Hub
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/student_model:latest
