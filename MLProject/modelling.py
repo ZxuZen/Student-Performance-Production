@@ -45,6 +45,3 @@ if __name__ == "__main__":
         mlflow.log_metric("r2", r2)
         
         mlflow.sklearn.log_model(model, "model")
-
-        with open("../run_id.txt", "w") as f:
-            f.write(run.info.run_id)
