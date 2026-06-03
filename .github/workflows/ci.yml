@@ -41,18 +41,19 @@ jobs:
 
       - name: Get latest MLflow run_id
         run: |
-          MLRUNS_DIR=$(find . -type d -name "mlruns" | head -n 1)
-          echo "MLruns directory found at: $MLRUNS_DIR"
-          EXP_DIR="$MLRUNS_DIR/0"
-          RUN_ID=$(ls -1td "$EXP_DIR"/*/ 2>/dev/null | grep -v 'models' | grep -v '.trash' | head -n 1 | xargs -n 1 basename)
-          if [ -z "$RUN_ID" ]; then
-            echo "Error: RUN_ID tidak ditemukan!"
-            echo "Struktur folder yang ditemukan:"
-            find . -type d -name "mlruns" -exec ls -R {} \;
+          MLRUNS_LOC=$(find . -type d -name "mlruns" -print -quit)
+
+          if [ -z "$MLRUNS_LOC" ]; then
+            ls -R
             exit 1
           fi
-          echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-          echo "Model berhasil dideteksi dengan RUN_ID: $RUN_ID"
+
+          RUN_ID=$(find "$MLRUNS_LOC" -mindepth 2 -maxdepth 2 -type d ! -name 'models' ! -name 'artifacts' ! -name '.trash' | sort | tail -n 1 | xargs -n 1 basename)
+
+          if [ -z "$RUN_ID" ]; then
+            ls -R "$MLRUNS_LOC"
+            exit 1
+          fi
 
       - name: Build Docker Model Image
         run: |
