@@ -41,17 +41,12 @@ jobs:
 
       - name: Get latest MLflow run_id
         run: |
-          MLRUNS_LOC=$(find . -type d -name "mlruns" -print -quit)
-
-          if [ -z "$MLRUNS_LOC" ]; then
-            ls -R
-            exit 1
-          fi
-
-          RUN_ID=$(find "$MLRUNS_LOC" -mindepth 2 -maxdepth 2 -type d ! -name 'models' ! -name 'artifacts' ! -name '.trash' | sort | tail -n 1 | xargs -n 1 basename)
+          RUN_ID=$(find mlruns -name "meta.yaml" | head -n 1 | xargs dirname | xargs basename)
 
           if [ -z "$RUN_ID" ]; then
-            ls -R "$MLRUNS_LOC"
+            echo "Error: Tidak menemukan folder Run ID yang valid!"
+            echo "Isi seluruh direktori mlruns:"
+            find mlruns -maxdepth 4
             exit 1
           fi
 
