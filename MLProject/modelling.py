@@ -1,13 +1,13 @@
 import os
 import sys
-import argparse # Tambahkan ini
-import pandas as pd
+import mlflow
+import argparse 
 import numpy as np
+import pandas as pd
+import mlflow.sklearn
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-import mlflow
-import mlflow.sklearn
 
 def eval_metrics(actual, pred):
     rmse = np.sqrt(mean_squared_error(actual, pred))
@@ -17,8 +17,8 @@ def eval_metrics(actual, pred):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--csv_url", type=str, default="student_data_clean.csv")
-    parser.add_argument("--target_var", type=str, default="G3")
+    parser.add_argument("csv_url", type=str, default="student_data_clean.csv")
+    parser.add_argument("target_var", type=str, default="G3")
     args = parser.parse_args()
     
     try:
