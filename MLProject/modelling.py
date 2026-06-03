@@ -1,7 +1,7 @@
 import os
 import sys
 import mlflow
-import argparse 
+import argparse  
 import numpy as np
 import pandas as pd
 import mlflow.sklearn
@@ -17,8 +17,8 @@ def eval_metrics(actual, pred):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("csv_url", type=str, default="student_data_clean.csv")
-    parser.add_argument("target_var", type=str, default="G3")
+    parser.add_argument("csv_url", type=str, default="student_data_clean.csv", nargs='?')
+    parser.add_argument("target_var", type=str, default="G3", nargs='?')
     args = parser.parse_args()
     
     try:
@@ -33,6 +33,7 @@ if __name__ == "__main__":
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
+    mlflow.sklearn.autolog()
     with mlflow.start_run() as run:
         model = LinearRegression()
         model.fit(X_train, y_train)
@@ -43,5 +44,3 @@ if __name__ == "__main__":
         mlflow.log_metric("rmse", rmse)
         mlflow.log_metric("mae", mae)
         mlflow.log_metric("r2", r2)
-        
-        mlflow.sklearn.log_model(model, "model")

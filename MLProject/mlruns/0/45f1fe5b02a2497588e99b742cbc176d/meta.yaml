@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/Kuliah/Pelatihan/AI/MLOps/V2.1/Student-Performance-Production/MLProject/mlruns/0/45f1fe5b02a2497588e99b742cbc176d/artifacts
+end_time: 1780492203089
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 45f1fe5b02a2497588e99b742cbc176d
+run_name: intrigued-turtle-115
+run_uuid: 45f1fe5b02a2497588e99b742cbc176d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1780492199566
+status: 3
+tags: []
+user_id: MSI GF63

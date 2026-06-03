@@ -1,0 +1,10 @@
+digest: 41758dd2
+name: dataset
+profile: '{"num_rows": 79, "num_elements": 395}'
+schema: '{"mlflow_colspec": [{"type": "long", "name": "studytime", "required": true},
+  {"type": "long", "name": "failures", "required": true}, {"type": "long", "name":
+  "absences", "required": true}, {"type": "long", "name": "G1", "required": true},
+  {"type": "long", "name": "G2", "required": true}]}'
+source: '{"tags": {"mlflow.user": "MSI GF63", "mlflow.source.name": "modelling.py",
+  "mlflow.source.type": "LOCAL", "mlflow.source.git.commit": "b87a9b6566e601877b81d3f9c34b29e7fc44879f"}}'
+source_type: code
